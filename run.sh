@@ -22,8 +22,8 @@ python src/prepro.py \
 
 # training
 python src/train.py \
-	--train_dir ./data/MNIST/processed/train \
-	--val_dir ./data/MNIST/processed/val \
+	--train_dir ./data/MNIST/processed/train/training.pt \
+	--val_dir ./data/MNIST/processed/val/test.pt \
 	--model_dir ./model/demo \
 	--log_name demo \
 	--conf_path ./config/demo.conf 

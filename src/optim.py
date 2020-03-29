@@ -86,7 +86,7 @@ class MultipleOptimizer(object):
             self.optimizers[i].load_state_dict(state_dicts[i])
 
 
-class Optimizer(object):
+class Optimizers(object):
     """
     Controller class for optimization. Mostly a thin
     wrapper for `optim`, but also useful for implementing
