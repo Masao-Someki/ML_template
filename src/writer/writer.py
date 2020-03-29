@@ -38,7 +38,7 @@ class Logger(object):
 
         logging.basicConfig(filename='./log/log/%s' % logname,
                             format='[%(asctime)s] - %(name)s - %(message)s',
-                            **base_config)
+                            level=logging.INFO)
         writer = SummaryWriter(logdir='./log/tbx/%s' % logname)
 
         for name in args:
