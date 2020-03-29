@@ -21,7 +21,12 @@ python src/prepro.py \
 ############ stage 2 ################@
 
 # training
-#python train.py
+python src/train.py \
+	--train_dir ./data/MNIST/processed/train \
+	--val_dir ./data/MNIST/processed/val \
+	--model_dir ./model/demo \
+	--log_name demo \
+	--conf_path ./config/demo.conf 
 
 
 ######################################
