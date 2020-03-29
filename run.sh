@@ -2,15 +2,13 @@
 
 stage=012345
 
-. path.sh
-
-
-
 #####################################
 ############# stage 0 ###############
 
 # stage 0
 # data download
+python src/prepro.py \
+	--train_dir ./data
 
 
 #####################################
@@ -23,6 +21,12 @@ stage=012345
 ############ stage 2 ################@
 
 # training
+python src/train.py \
+	--train_dir ./data/MNIST/processed/train/training.pt \
+	--val_dir ./data/MNIST/processed/val/test.pt \
+	--model_dir ./model/demo \
+	--log_name demo \
+	--conf_path ./config/demo.conf 
 
 
 ######################################
