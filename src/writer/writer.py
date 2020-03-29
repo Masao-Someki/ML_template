@@ -36,8 +36,12 @@ class Logger(object):
         if not os.path.exists('./log/tbx'):
             os.makedirs('./log/tbx')
 
-        logging.basicConfig(filename='./log/log/%s' % logname,
+        if not logname == '':
+            logging.basicConfig(filename='./log/log/%s' % logname,
                             format='[%(asctime)s] - %(name)s - %(message)s',
+                            level=logging.INFO)
+        else:
+            logging.basicConfig(format='[%(asctime)s] - %(name)s - %(message)s',
                             level=logging.INFO)
         writer = SummaryWriter(logdir='./log/tbx/%s' % logname)
 
