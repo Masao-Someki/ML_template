@@ -24,12 +24,11 @@ fi
 
 # training
 python src/train.py \
-	--train_dir ./data/MNIST/processed/training.pt \
-	--val_dir ./data/MNIST/processed/test.pt \
-	--conf_path ./config/demo.conf \
-	--model_dir ./model \
-	--log_name mnist_test
-
+	--train_dir ./data/MNIST/processed/train/training.pt \
+	--val_dir ./data/MNIST/processed/val/test.pt \
+	--model_dir ./model/demo \
+	--log_name demo \
+	--conf_path ./config/demo.conf 
 
 ######################################
 ############ stage 3 ################3
@@ -41,4 +40,3 @@ python src/train.py \
 ############ stage 4 #################
 
 # export on onnx model to speed up inference
-

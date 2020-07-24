@@ -1,7 +1,90 @@
-""" Optimizers class """
+""" Optimizers class. This script is modified from
+https://github.com/nlpyang/PreSumm/blob/master/src/models/optimizers.py """
 import torch
 import torch.optim as optim
 from torch.nn.utils import clip_grad_norm_
+
+
+def use_gpu(opt):
+    """
+    Creates a boolean if gpu used
+    """
+    return (hasattr(opt, 'gpu_ranks') and len(opt.gpu_ranks) > 0) or \
+           (hasattr(opt, 'gpu') and opt.gpu > -1)
+
+def build_optim(model, opt, checkpoint):
+    """ Build optimizer """
+    saved_optimizer_state_dict = None
+
+    if opt.train_from:
+        optim = checkpoint['optim']
+        # We need to save a copy of optim.optimizer.state_dict() for setting
+        # the, optimizer state later on in Stage 2 in this method, since
+        # the method optim.set_parameters(model.parameters()) will overwrite
+        # optim.optimizer, and with ith the values stored in
+        # optim.optimizer.state_dict()
+        saved_optimizer_state_dict = optim.optimizer.state_dict()
+    else:
+        optim = Optimizer(
+            opt.optim, opt.learning_rate, opt.max_grad_norm,
+            lr_decay=opt.learning_rate_decay,
+            start_decay_steps=opt.start_decay_steps,
+            decay_steps=opt.decay_steps,
+            beta1=opt.adam_beta1,
+            beta2=opt.adam_beta2,
+            adagrad_accum=opt.adagrad_accumulator_init,
+            decay_method=opt.decay_method,
+            warmup_steps=opt.warmup_steps)
+
+    optim.set_parameters(model.named_parameters())
+
+    if opt.train_from:
+        optim.optimizer.load_state_dict(saved_optimizer_state_dict)
+        if use_gpu(opt):
+            for state in optim.optimizer.state.values():
+                for k, v in state.items():
+                    if torch.is_tensor(v):
+                        state[k] = v.cuda()
+
+        if (optim.method == 'adam') and (len(optim.optimizer.state) < 1):
+            raise RuntimeError(
+                "Error: loaded Adam optimizer from existing model" +
+                " but optimizer state is empty")
+
+    return optim
+
+
+class MultipleOptimizer(object):
+    """ Implement multiple optimizers needed for sparse adam """
+
+    def __init__(self, op):
+        """ ? """
+        self.optimizers = op
+
+    def zero_grad(self):
+        """ ? """
+        for op in self.optimizers:
+            op.zero_grad()
+
+    def step(self):
+        """ ? """
+        for op in self.optimizers:
+            op.step()
+
+    @property
+    def state(self):
+        """ ? """
+        return {k: v for op in self.optimizers for k, v in op.state.items()}
+
+    def state_dict(self):
+        """ ? """
+        return [op.state_dict() for op in self.optimizers]
+
+    def load_state_dict(self, state_dicts):
+        """ ? """
+        assert len(state_dicts) == len(self.optimizers)
+        for i in range(len(state_dicts)):
+            self.optimizers[i].load_state_dict(state_dicts[i])
 
 
 class Optimizers(object):
@@ -31,27 +114,29 @@ class Optimizers(object):
     https://arxiv.org/pdf/1706.03762.pdf, particularly the value beta2=0.98
     was used there however, beta2=0.999 is still arguably the more
     established value, so we use that here as well
-
-    This code is modified from 
-    https://github.com/nlpyang/PreSumm/blob/master/src/models/optimizers.py
     """
 
-    def __init__(self, config):
+    def __init__(self, method, learning_rate, max_grad_norm,
+                 lr_decay=1, start_decay_steps=None, decay_steps=None,
+                 beta1=0.9, beta2=0.999,
+                 adagrad_accum=0.0,
+                 decay_method=None,
+                 warmup_steps=4000, weight_decay=0):
         self.last_ppl = None
-        self.learning_rate = config['learning_rate']
-        self.original_lr = config['learning_rate']
-        self.max_grad_norm = config['max_grad_norm']
-        self.method = config['method']
-        self.lr_decay = config['lr_decay']
-        self.start_decay_steps = config['start_decay_steps']
-        self.decay_steps = config['decay_steps']
+        self.learning_rate = learning_rate
+        self.original_lr = learning_rate
+        self.max_grad_norm = max_grad_norm
+        self.method = method
+        self.lr_decay = lr_decay
+        self.start_decay_steps = start_decay_steps
+        self.decay_steps = decay_steps
         self.start_decay = False
         self._step = 0
-        self.betas = [config['beta1'], config['beta2']]
-        self.adagrad_accum = config['adagrad_accum']
-        self.decay_method = config['decay_method']
-        self.warmup_steps = config['warmup_steps']
-        self.weight_decay = config['weight_decay']
+        self.betas = [beta1, beta2]
+        self.adagrad_accum = adagrad_accum
+        self.decay_method = decay_method
+        self.warmup_steps = warmup_steps
+        self.weight_decay = weight_decay
 
     def set_parameters(self, params):
         """ ? """
