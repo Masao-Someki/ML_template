@@ -7,8 +7,10 @@ stage=012345
 
 # stage 0
 # data download
-python src/prepro.py \
-	--train_dir ./data
+if [ ! -e ./data/MNIST ]; then
+	python src/prepro.py \
+		--train_dir ./data
+fi
 
 
 #####################################
@@ -28,7 +30,6 @@ python src/train.py \
 	--log_name demo \
 	--conf_path ./config/demo.conf 
 
-
 ######################################
 ############ stage 3 ################3
 
@@ -39,4 +40,3 @@ python src/train.py \
 ############ stage 4 #################
 
 # export on onnx model to speed up inference
-

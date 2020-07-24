@@ -30,5 +30,3 @@ class Config(object):
 
     def values(self):
         return self.dic.values()
-
-

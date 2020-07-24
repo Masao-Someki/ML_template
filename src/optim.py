@@ -4,6 +4,7 @@ import torch
 import torch.optim as optim
 from torch.nn.utils import clip_grad_norm_
 
+
 def use_gpu(opt):
     """
     Creates a boolean if gpu used

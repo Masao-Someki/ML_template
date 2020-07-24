@@ -70,11 +70,11 @@ def train(args):
 
             # compute loss
             loss, _ = loss_fn(out, labels)
-            
+
             # BP
             loss.backward()
             optim.step()
-            
+
             # log
             running_loss.append(loss.item())
 
@@ -93,7 +93,7 @@ def train(args):
                         loss, criteria = loss_fn(out, labels)
                         val_loss.append(loss.item())
                         criterias.append(criteria.item())
-                
+
                 criteria = np.mean(criterias)
                 #logger.val.figure(np.mean(val_loss))
                 #logger.val.figure(criteria)

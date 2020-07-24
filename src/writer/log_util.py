@@ -1,5 +1,8 @@
 # custom log utils class
 
+# Copyright 2020 Masao Someki
+#  MIT License (https://opensource.org/licenses/MIT)
+
 class CustomLogClass(object):
     def __init__(self, name, logger, writer):
         self.name = name
@@ -9,10 +12,8 @@ class CustomLogClass(object):
     def info(self, text):
         self.logger.info(text)
 
-    def wav(self):
-        # function to save wav
-        pass
-    
-    def figure(self):
+    def figure(self, phase, dic, iter_count):
         # function to log figures like loss.
-        pass
+        for k,v in dic.items():
+            self.writer.add_scalar('data/%s/%s' % (phase, k), v, iter_count)
+        self.writer.flush()

@@ -1,4 +1,3 @@
-
 import torch
 
 class Loss(torch.nn.Module):
@@ -9,4 +8,3 @@ class Loss(torch.nn.Module):
     def forward(self, x, y):
         y = y.squeeze(1)
         return self.criterion(x, y), self.criterion(x, y)
-

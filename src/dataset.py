@@ -16,5 +16,3 @@ class Dataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):
         return self.data[idx].to(self.device).unsqueeze(0), \
                 self.label[idx].to(self.device).unsqueeze(0)
-
-
