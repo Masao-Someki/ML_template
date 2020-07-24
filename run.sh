@@ -7,8 +7,10 @@ stage=012345
 
 # stage 0
 # data download
-python src/prepro.py \
-	--train_dir ./data
+if [ ! -e ./data/MNIST ]; then
+	python src/prepro.py \
+		--train_dir ./data
+fi
 
 
 #####################################
@@ -21,7 +23,12 @@ python src/prepro.py \
 ############ stage 2 ################@
 
 # training
-#python train.py
+python src/train.py \
+	--train_dir ./data/MNIST/processed/training.pt \
+	--val_dir ./data/MNIST/processed/test.pt \
+	--conf_path ./config/demo.conf \
+	--model_dir ./model \
+	--log_name mnist_test
 
 
 ######################################
