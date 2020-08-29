@@ -55,7 +55,7 @@ logger.tbx_log.figure(
 # each functions can send log text to slack channel.
 logger.slack.info(
     'This message will send to slack channel',
-    send_to_channel=True
+    send_to_slack=True
 )
 ```
 Log files will save into `log/log/${log_name}`.  
