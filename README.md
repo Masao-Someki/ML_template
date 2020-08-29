@@ -1,6 +1,6 @@
 # ML_template  
 Template repository to build machine learning project with Pytorch.
-This repository does not support Trainer class.
+This repository does not support Trainer class.  
 You can copy this repository and modify the following files.  
 - `src/train.py`
 - `src/dataset.py`
@@ -14,7 +14,7 @@ You can copy this repository and modify the following files.
 ML_template
 ├── LICENSE
 ├── README.md
-├── data                  <- Directory to store train/val data/
+├── data                  <- Directory to store train/val data.
 ├── log                   <- Directory to store log files.
 ├── model                 <- Directory to store trained models.
 ├── path.sh                
