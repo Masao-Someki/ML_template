@@ -32,7 +32,7 @@ class Logger(object):
         Logging class
 
     '''
-    def __init__(self, logname, *args, **base_config):
+    def __init__(self, logname, *args):
         if not os.path.exists('./log/log'):
             os.makedirs('./log/log')
         if not os.path.exists('./log/tbx'):
